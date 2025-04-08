@@ -5,6 +5,10 @@ import (
 	controller "go-resturant-management/controllers"
 )
 
-func OrderItemsRoutes(incomingRoutes *gin.Engine) {
-	
+func OrderItemRoutes(incomingRoutes *gin.Engine) {
+	incomingRoutes.GET("/orderItems", controller.GetOrderItems())
+	incomingRoutes.GET("/orderItems/:order_item", controller.GetOrderItem())
+	incomingRoutes.GET("/orderItems-order/:order_id",controller.GetOrderItemsByOrder())
+	incomingRoutes.POST("/orderItems", controller.CreateOrderItem())
+	incomingRoutes.PATCH("/orderItems/:order_item", controller.UpdateOrderItem())
 }
