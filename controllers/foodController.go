@@ -51,6 +51,14 @@ func CreateFood() gin.HandlerFunc {
 		var food models.Food
 		var menu models.Food
 
+
+		//this is short varibale decleration to capture the error in an if statement 
+		/*the traditional way is as follows:
+		err := c.BindJSON(&FOOD)
+		if err != nil {
+		//handle error}
+	
+		*/
 		if err := c.BindJSON(&food); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
@@ -75,10 +83,10 @@ func CreateFood() gin.HandlerFunc {
 			return
 		}
 
-		food.Created_at, _ = time.Parse(time.RFC3339, time.Now()).Format(time.RFC3339)
-		food.Updated_at, _ = time.Parse(time.RFC3339, time.Now()).Format(time.RFC3339)
+		food.Created_at, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
+		food.Updated_at, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
 		food.ID = primitive.NewObjectID()
-		food.Food_id = food.ID.Hex()      // this will give us the hex value of the object id
+		food.Food_id = food.ID.Hex()      // this will give us the hex value of the object id //concerts the objectID into string format
 		var num = toFixed(*food.Price, 2) //precision unit is the number of decimal places we want to keep
 		food.Price = &num
 		//everything that is required in the food model we have it here so we can add it to the database
@@ -99,8 +107,6 @@ func UpdateFood() gin.HandlerFunc {
 	return func(c *gin.Context) {
 	}
 }
-
-//
 
 func round(num float64) float64 {
 
