@@ -5,6 +5,7 @@ import (
 	"go-resturant-management/database"
 	"go-resturant-management/models"
 	"net/http"
+	"strconv"
 	"time"
 
 	"fmt"
@@ -25,9 +26,25 @@ var validate = validator.New()
 
 func GetFoods() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+		strvconv.Atoi(c.Query("recordPerPage")) //too much data will be sent over so this minimises issues
+		if err != nil || recordPerPage < 1 {
+			recordPerPage = 10
+		}
+
+		page, err := strconv.Atoi(c.Query("page"))
+		if err != nil || page < 1 {
+			page = 1
+		}
+		startIndex := (page - 1) * recordPerPage //read skip and limit
+		startIndex, err = strconv.Atoi(c.Query("startIndex"))
+
+		matchStage := bson.D(//macthes records to mongo db based on critera 
+		groupStage //will group records together using the criteria 
+		projectStage //allows what values should go to the front end
 	}
 }
-
+//check how mongo DB aggregations work 
 func GetFood() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
@@ -51,13 +68,12 @@ func CreateFood() gin.HandlerFunc {
 		var food models.Food
 		var menu models.Food
 
-
-		//this is short varibale decleration to capture the error in an if statement 
+		//this is short varibale decleration to capture the error in an if statement
 		/*the traditional way is as follows:
 		err := c.BindJSON(&FOOD)
 		if err != nil {
 		//handle error}
-	
+
 		*/
 		if err := c.BindJSON(&food); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -91,15 +107,15 @@ func CreateFood() gin.HandlerFunc {
 		food.Price = &num
 		//everything that is required in the food model we have it here so we can add it to the database
 
-		result, insertErr := foodCollection.InsertOne(ctx, food) 
-		if insertErr !=nil {
+		result, insertErr := foodCollection.InsertOne(ctx, food)
+		if insertErr != nil {
 			msg := fmt.Sprintf("food item was not created")
 			c.JSON(http.StatusInternalServerError, gin.H{"error": msg})
 			return
 		}
 		defer cancel()
 		c.JSON(http.StatusOK, result)
-		
+
 	}
 }
 

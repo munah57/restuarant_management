@@ -1,8 +1,9 @@
 package routes
 
 import (
-	"github.com/gin-gonic/gin"
 	controller "go-resturant-management/controllers"
+
+	"github.com/gin-gonic/gin"
 )
 
 func FoodRoutes(incomingRoutes *gin.Engine) {
